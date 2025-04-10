@@ -32,5 +32,13 @@ class KandidateController extends Controller
     
         return redirect()->route('admin')->with('success', 'Kandidat berhasil ditambahkan!');
     }
+
+    public function destroy($id)
+    {
+        $kandidat = DB::table('candidates')->where('id',$id)->delete();
+
+        return redirect()->back()->with('success', 'Kandidat berhasil dihapus.');
+    }
+
     
 }

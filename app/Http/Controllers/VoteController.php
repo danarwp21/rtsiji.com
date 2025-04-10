@@ -29,6 +29,7 @@ class VoteController extends Controller
 
         $user->has_voted = true;
         $user->kandidat_id = $request->input('kandidat_id');
+        $user->voted_at = now();
         $user->save();
 
         return redirect('/home')->with('success', 'Terima kasih! Suara Anda telah tercatat.');

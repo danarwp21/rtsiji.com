@@ -53,6 +53,9 @@
                             @error('foto')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+
+                            <!-- Preview Foto -->
+                            <div id="foto-preview" class="mt-3 text-center"></div>
                         </div>
 
                         <div class="text-end">
@@ -67,3 +70,42 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Preview Foto
+        const fotoInput = document.getElementById('foto');
+        const previewContainer = document.getElementById('foto-preview');
+
+        fotoInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewContainer.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview Foto" class="img-thumbnail rounded-4 shadow-sm" style="max-height: 200px;">
+                    `;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.innerHTML = '';
+            }
+        });
+
+        // Validasi Realtime
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                if (input.checkValidity()) {
+                    input.classList.remove('is-invalid');
+                    input.classList.add('is-valid');
+                } else {
+                    input.classList.remove('is-valid');
+                    input.classList.add('is-invalid');
+                }
+            });
+        });
+    });
+</script>
+@endpush

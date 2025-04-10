@@ -22,7 +22,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/home', 'HomeController@index')->name('home');
+Route::post('/get-nama', 'CheckingController@getNamaByNik')->name('get-nama');
 Route::get('/input_pilihan', 'VoteController@pilih')->middleware('auth');
 Route::post('/vote/{id}', 'VoteController@vote')->name('vote')->middleware('auth');
 
@@ -31,7 +31,9 @@ Route::post('/admin/candidate', 'AdminController@store')->name('admin.store')->m
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/kandidate/create', 'KandidateController@create')->name('kandidate.create');
+    Route::get('/warga', 'AdminController@warga')->name('warga.index');
     Route::post('/kandidate', 'KandidateController@store')->name('kandidate.store');
+    Route::delete('/kandidate/{id}', 'KandidateController@destroy')->name('kandidate.destroy');
 });
 
 Route::group(['middleware' => 'auth'], function () {
@@ -40,6 +42,5 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 Route::get('/vote/report', 'VoteController@report')->name('vote.report');
-
 
 

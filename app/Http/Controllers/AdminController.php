@@ -10,11 +10,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\Candidate;
 use App\Models\Kandidate;
+use Carbon\Carbon;
+
 
 class AdminController extends Controller
 {
     public function index() {
-        $data = DB::table('users')->where('role','warga')->paginate(20);
+        $data = DB::table('users')->where('role','warga')->orderBy('name')->paginate(20);
         $warga = DB::table('users')->where('role','warga')->get();
         $totalWarga = $warga->count();
         $sudahMemilih = $warga->where('has_voted', 1)->count();
@@ -30,5 +32,10 @@ class AdminController extends Controller
         return back()->with('success', 'Kandidat ditambahkan!');
     }
 
-    
+    public function warga()
+    {
+        $data = DB::table('users')->where('role','warga')->orderBy('name')->get();
+        return view('warga.index', compact('data'));
+
+    }
 }
