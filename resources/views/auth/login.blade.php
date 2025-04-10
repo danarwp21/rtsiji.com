@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="{{ asset('storage/logo.png') }}">
   <title>Login - E-Voting RTSIJI</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -153,5 +154,53 @@
       this.classList.toggle('bi-eye-slash-fill');
     });
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+  document.querySelector('form').addEventListener('submit', async function (e) {
+    e.preventDefault(); // cegah submit langsung
+  
+    const nik = document.getElementById('nik').value;
+    if (!nik) return;
+  
+    try {
+      const response = await fetch("{{ route('get-nama') }}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ nik })
+      });
+  
+      if (!response.ok) {
+        throw new Error("NIK tidak ditemukan");
+      }
+  
+      const data = await response.json();
+  
+      Swal.fire({
+        title: 'Konfirmasi NIK',
+        html: `Apakah nama Anda <strong>${data.nama}</strong>?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Benar',
+        cancelButtonText: 'Batal'
+      }).then(result => {
+        if (result.isConfirmed) {
+          e.target.submit(); // submit form login
+        }
+      });
+  
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal',
+        text: err.message || 'Terjadi kesalahan saat memeriksa NIK',
+      });
+    }
+  });
+  </script>
+  
 </body>
 </html>

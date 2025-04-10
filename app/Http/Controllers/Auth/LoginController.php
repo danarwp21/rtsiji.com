@@ -7,6 +7,7 @@ use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
@@ -41,7 +42,7 @@ class LoginController extends Controller
     }
 
     public function login(Request $request)
-{
+    {
         $request->validate([
             'nik' => 'required',
             'password' => 'required',
@@ -64,4 +65,18 @@ class LoginController extends Controller
             return redirect()->route('home');
         }
     }
+
+    public function getNamaByNik(Request $request)
+    {
+        $request->validate(['nik' => 'required']);
+        
+        $user = DB::table('users')->where('nik', $request->nik)->first();
+
+        if (!$user) {
+            return response()->json(['error' => 'NIK tidak ditemukan'], 404);
+        }
+
+        return response()->json(['nama' => $user->name]);
+    }
+
 }
