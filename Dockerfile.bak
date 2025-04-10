@@ -14,17 +14,22 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libzip-dev \
     mysql-client \
+    && docker-php-ext-configure gd \
+        --with-freetype \
+        --with-jpeg \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
 WORKDIR /var/www
 
 COPY . .
 
+# Install dependencies via Composer
 RUN composer install --optimize-autoloader --no-dev
+
+# Laravel specific commands
 RUN php artisan config:clear && php artisan route:clear
 
 CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
